@@ -1,0 +1,54 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+
+# Django database (if using SQLite)
+*.sqlite3
+
+# Django migrations (optional, if you prefer generating them fresh)
+**/migrations/*.py
+**/migrations/__pycache__/
+
+# Logs
+*.log
+
+# Environment variables and secrets
+.env
+*.env
+
+# IDE/editor-specific files
+.vscode/
+.idea/
+*.swp
+*.sublime-project
+*.sublime-workspace
+
+# macOS system files
+.DS_Store
+
+# Python dependency management
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Coverage and test outputs
+htmlcov/
+.coverage
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Static and media files (optional; generated during build/deployment)
+staticfiles/
+media/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
