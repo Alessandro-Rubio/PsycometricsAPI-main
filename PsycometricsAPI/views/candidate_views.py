@@ -124,7 +124,7 @@ def candidate_list(request):
         }
 
         # Trigger the webhook
-        webhook_url = "https://roberto-pruebas.app.n8n.cloud/webhook/candidate-registered"
+        webhook_url = "https://gilrubio.app.n8n.cloud/webhook/candidate-registered"
         webhook_payload = {
             "first_name": data["first_name"],
             "last_name": data["last_name"],
