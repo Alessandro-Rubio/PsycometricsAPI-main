@@ -1,78 +1,39 @@
+# settings.py
+import os
 from pathlib import Path
-from decouple import config
-from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = config('DJANGO_SECRET_KEY')
-DEBUG = True 
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# ALLOWED_HOSTS = [
-#     "localhost",
-#     "127.0.0.1",
-#     "192.168.100.73",
-#     "18.206.182.194",
-#     "psycometrics.app",
-#     "www.psycometrics.app",
-# ]
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
 
-ALLOWED_HOSTS = [
-    "*",  # Allow all hosts for development purposes
-]
+# Configuración de MongoDB
+MONGO_URI = os.environ.get('MONGO_URI')
+MONGO_DB = os.environ.get('MONGO_DB')
 
-INSTALLED_APPS = [
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'PsycometricsAPI',
-    'corsheaders',
-]
+# Configuración de archivos estáticos
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'PsycometricsAI.urls'
-
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-            ],
-        },
-    },
+# CORS Config
+CORS_ALLOWED_ORIGINS = [
+    "https://victorious-mud-0e2a64b1e.1.azurestaticapps.net",
+    "https://gilrubio.app.n8n.cloud/webhook/candidate-evaluation"
+    "https://gilrubio.app.n8n.cloud/webhook/candidate-registered"
+    "https://gilrubio.app.n8n.cloud/webhook/test-completed"
 ]
 
-WSGI_APPLICATION = 'PsycometricsAI.wsgi.application'
-
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "PsycometricsAPI.authentication.CustomJwtAuthentication.CustomJWTAuthentication",
-    ],
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.AllowAny",
-    ],
-}
-
-CORS_ALLOW_ALL_ORIGINS = True
-
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(weeks=1),  # Access token lasts 1 week
-    "REFRESH_TOKEN_LIFETIME": timedelta(weeks=2),  # Refresh token lasts 2 weeks
-    "ROTATE_REFRESH_TOKENS": False,  # Optional: Set to True if you want to rotate refresh tokens
-    "BLACKLIST_AFTER_ROTATION": True,  # Optional: Blacklist old refresh tokens after rotation
-}
-
-MICROSOFT_AUTH_CLIENT_ID = config('MICROSOFT_CLIENT_ID')
-MICROSOFT_AUTH_CLIENT_SECRET = config('MICROSOFT_CLIENT_SECRET')
-AZURE_STORAGE_CONNECTION_STRING = config("AZURE_STORAGE_CONNECTION_STRING")
-AZURE_STORAGE_CONTAINER_NAME = config("AZURE_STORAGE_CONTAINER_NAME")
+# Azure Storage para CVs
+AZURE_STORAGE_CONNECTION_STRING = os.environ.get('AZURE_STORAGE_CONNECTION_STRING')
+AZURE_STORAGE_CONTAINER_NAME = os.environ.get('AZURE_STORAGE_CONTAINER_NAME')
