@@ -36,7 +36,6 @@ ml-dtypes==0.2.0
 oauthlib==3.2.2
 opt-einsum==3.4.0
 packaging==25.0
-pandas==2.0.3
 pillow==10.4.0
 protobuf==4.25.8
 pyasn1==0.6.1
@@ -60,4 +59,4 @@ urllib3==2.2.3
 werkzeug==3.0.6
 wrapt==1.14.1
 zipp==3.20.2
-whitenoise
+whitenoise==6.9.0
