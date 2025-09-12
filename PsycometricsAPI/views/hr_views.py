@@ -124,7 +124,7 @@ def candidate_evaluation(request, id):  # Change user_id to id
     )
 
     # Trigger the webhook
-    webhook_url = "https://alessandro21.app.n8n.cloud/webhook/candidate-registered"
+    webhook_url = "https://roberto-pruebas.app.n8n.cloud/webhook/candidate-evaluation"
     webhook_payload = {
         "first_name": candidate.get("first_name"),
         "last_name": candidate.get("last_name"),
