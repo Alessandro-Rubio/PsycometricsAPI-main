@@ -5,7 +5,8 @@ from PsycometricsAPI.views.microsoft_auth_view import microsoft_auth
 from PsycometricsAPI.views.google_auth_views import google_auth
 from PsycometricsAPI.views.hr_views import hr_candidates
 from PsycometricsAPI.views.candidate_views import verify_completed_test
-from PsycometricsAPI.views.report_views import create_report, get_report_by_candidate, get_reports_by_hr
+from PsycometricsAPI.views.report_views import create_report 
+
 
 urlpatterns = [
     path('api/candidates/', candidate_views.candidate_list),
@@ -25,8 +26,6 @@ urlpatterns = [
     path("api/results/<str:id>/", result_views.result_detail),
 
     path('api/reports/', create_report),
-    path('api/reports/candidate/<str:candidate_id>/', get_report_by_candidate),
-    path('api/reports/hr/', get_reports_by_hr),
 
     path('api/signup/', email_auth_views.signup),
     path('api/login/', email_auth_views.login),
