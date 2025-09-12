@@ -29,9 +29,10 @@ MIDDLEWARE = [
 # CORS Config
 CORS_ALLOWED_ORIGINS = [
     "https://victorious-mud-0e2a64b1e.1.azurestaticapps.net",
-    "https://gilrubio.app.n8n.cloud/webhook/candidate-evaluation"
-    "https://gilrubio.app.n8n.cloud/webhook/candidate-registered"
-    "https://gilrubio.app.n8n.cloud/webhook/test-completed"
+    "https://alessandro21.app.n8n.cloud/webhook/candidate-evaluation",
+    "https://alessandro21.app.n8n.cloud/webhook/candidate-registered",
+    "https://alessandro21.app.n8n.cloud/webhook/test-completed",
+    "https://psycometrics.app/",
 ]
 
 # Azure Storage para CVs

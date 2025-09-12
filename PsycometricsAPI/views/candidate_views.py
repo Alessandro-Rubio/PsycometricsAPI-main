@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from bson import ObjectId
-from ..db.mongo import candidate_collection, result_collection
+from ..db.mongo import candidate_collection, result_collection, report_collection
 from ..serializers import CandidateSerializer
 from ..utils.objectIdConversion import convert_objectid
 from azure.storage.blob import BlobServiceClient
@@ -19,6 +19,14 @@ def candidate_list(request):
     if request.method == "GET":
         candidates = list(candidate_collection.find())
         candidates = [convert_objectid(c) for c in candidates]
+        
+        # Agregar información de reportes a cada candidato
+        for candidate in candidates:
+            report = report_collection.find_one({"candidate_id": candidate["_id"]})
+            candidate["has_report"] = report is not None
+            if report:
+                candidate["report_id"] = str(report["_id"])
+        
         return Response(candidates)
 
     elif request.method == "POST":
@@ -104,7 +112,9 @@ def candidate_list(request):
             "hr": hr_object_id,
             "cv": cv_url,
             "candidate_evaluation": "pending",
-            "code": unique_code
+            "code": unique_code,
+            "has_report": False,  # Nuevo campo para indicar si tiene reporte
+            "report_id": None     # ID del reporte si existe
         }
 
         result = candidate_collection.insert_one(candidate_doc)
@@ -120,7 +130,9 @@ def candidate_list(request):
             "hr_id": str(hr_object_id),
             "cv": candidate_doc["cv"],
             "candidate_evaluation": candidate_doc["candidate_evaluation"],
-            "code": candidate_doc["code"]
+            "code": candidate_doc["code"],
+            "has_report": candidate_doc["has_report"],
+            "report_id": candidate_doc["report_id"]
         }
 
         # Trigger the webhook
@@ -154,6 +166,13 @@ def candidate_detail(request, id):
 
     if request.method == "GET":
         candidate = convert_objectid(candidate)
+        
+        # Agregar información de reporte si existe
+        report = report_collection.find_one({"candidate_id": candidate_id})
+        candidate["has_report"] = report is not None
+        if report:
+            candidate["report_id"] = str(report["_id"])
+        
         return Response(candidate)
 
     elif request.method == "DELETE":
@@ -181,6 +200,13 @@ def candidate_detail(request, id):
         candidate_collection.update_one({"_id": candidate_id}, {"$set": update_data})
         candidate = candidate_collection.find_one({"_id": candidate_id})
         candidate = convert_objectid(candidate)
+        
+        # Agregar información de reporte si existe
+        report = report_collection.find_one({"candidate_id": candidate_id})
+        candidate["has_report"] = report is not None
+        if report:
+            candidate["report_id"] = str(report["_id"])
+            
         return Response(candidate)
 
 
@@ -197,6 +223,13 @@ def verify_candidate_code(request):
     candidate = candidate_collection.find_one({"code": code})
     if candidate:
         candidate = convert_objectid(candidate)
+        
+        # Agregar información de reporte si existe
+        report = report_collection.find_one({"candidate_id": candidate["_id"]})
+        candidate["has_report"] = report is not None
+        if report:
+            candidate["report_id"] = str(report["_id"])
+            
         return Response({
             "status": "success",
             "candidate": candidate
