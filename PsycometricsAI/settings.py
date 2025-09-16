@@ -1,42 +1,37 @@
-# settings.py
-import os
 from pathlib import Path
+from decouple import config
 from datetime import timedelta
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+SECRET_KEY = config('DJANGO_SECRET_KEY')
+DEBUG = True
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = [
+    "*",  # Allow all hosts for development purposes
+]
 
-# Configuración de MongoDB
-MONGO_URI = os.environ.get('MONGO_URI')
-MONGO_DB = os.environ.get('MONGO_DB')
-
-# Configuración de archivos estáticos
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# Aplicaciones instaladas
+# Configuración esencial de Django
 INSTALLED_APPS = [
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
     'PsycometricsAPI',
 ]
 
-# Middleware - CORREGIDO: CorsMiddleware debe estar al principio
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # Debe estar AL INICIO
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -44,67 +39,36 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# Configuración REST Framework
+ROOT_URLCONF = 'PsycometricsAI.urls'
+
+WSGI_APPLICATION = 'PsycometricsAI.wsgi.application'
+
+# Configuración de REST Framework
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "PsycometricsAPI.authentication.CustomJwtAuthentication.CustomJWTAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
+    ],
 }
 
-# Configuración Simple JWT
+# Configuración CORS
+CORS_ALLOW_ALL_ORIGINS = True
+# O si prefieres lista blanca:
+# CORS_ALLOWED_ORIGINS = [
+#     "https://victorious-mud-0e2a64b1e.1.azurestaticapps.net",
+#     "https://gilrubio.app.n8n.cloud",
+# ]
+
+# Configuración JWT
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(weeks=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(weeks=2),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": True,
 }
 
-# Configuración CORS - CORREGIDO
-CORS_ALLOW_ALL_ORIGINS = False
-
-# Lista de orígenes permitidos - CORREGIDO (sin trailing slashes)
-CORS_ALLOWED_ORIGINS = [
-    "https://victorious-mud-0e2a64b1e.1.azurestaticapps.net",
-    "https://alessandro21.app.n8n.cloud",
-    "https://psycometrics.app",
-    "http://localhost:19006",
-    "exp://192.168.1.*:19000",
-]
-
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_METHODS = [
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',
-    'POST',
-    'PUT',
-]
-
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-]
-
-# Azure Storage para CVs
-AZURE_STORAGE_CONNECTION_STRING = os.environ.get('AZURE_STORAGE_CONNECTION_STRING')
-AZURE_STORAGE_CONTAINER_NAME = os.environ.get('AZURE_STORAGE_CONTAINER_NAME')
-
-ROOT_URLCONF = 'Psycometrics.urls'
-
-WSGI_APPLICATION = 'Psycometrics.wsgi.application'
-
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_TZ = True
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# Configuración Azure
+AZURE_STORAGE_CONNECTION_STRING = config("AZURE_STORAGE_CONNECTION_STRING")
+AZURE_STORAGE_CONTAINER_NAME = config("AZURE_STORAGE_CONTAINER_NAME")

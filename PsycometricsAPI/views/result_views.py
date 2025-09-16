@@ -61,7 +61,7 @@ def result_list(request):
             result = result_collection.insert_one(result_doc)
 
             # Trigger the webhook
-            webhook_url = "https://alessandro21.app.n8n.cloud/webhook/test-completed"
+            webhook_url = "https://roberto-pruebas.app.n8n.cloud/webhook/test-completed"
             webhook_payload = {
                 "result_id": str(result.inserted_id),
                 "test_id": str(result_doc["test_id"]),
